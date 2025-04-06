@@ -5,7 +5,7 @@ import CartManager from './managers/CartManager.js';
 const app = express();
 const PORT = 8080;
 
-app.use(express.json()); // Middleware para procesar JSON en el body de las peticiones
+app.use(express.json());
 
 const productManager = new ProductManager();
 const cartManager = new CartManager();
