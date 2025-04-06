@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "title": "Nuevo Producto",
+    "description": "Descripción del nuevo producto",
+    "code": "ABC123",
+    "price": 199.99,
+    "status": true,
+    "stock": 50,
+    "category": "Electrónica",
+    "thumbnails": [
+      ""
+    ]
+  }
+]
