@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Productos en Tiempo Real</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <h1>Productos en Tiempo Real</h1>
+  <ul id="productList">
+    {{#each products}}
+      <li>{{this.title}} - ${{this.price}} <button onclick="deleteProduct({{this.id}})">Eliminar</button></li>
+    {{/each}}
+  </ul>
+  <form id="productForm">
+    <input type="text" id="title" placeholder="Título" required>
+    <input type="text" id="description" placeholder="Descripción">
+    <input type="text" id="code" placeholder="Código">
+    <input type="number" id="price" placeholder="Precio" required>
+    <input type="number" id="stock" placeholder="Stock">
+    <input type="text" id="category" placeholder="Categoría">
+    <button type="submit">Agregar</button>
+  </form>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/socket.js"></script>
+</body>
+</html>
