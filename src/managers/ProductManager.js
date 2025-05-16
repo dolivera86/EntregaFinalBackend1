@@ -1,50 +1,50 @@
-import fs from 'fs';
-import path from 'path';
-
-const productsFile = path.join('src', 'data', 'products.json');
+import Product from '../models/Product.js';
 
 class ProductManager {
-  constructor() {
-    this.path = productsFile;
-  }
+  // Obtener todos los productos con filtros y paginación
+  getProducts = async (limit = 10, page = 1, filters = {}, sort = {}) => {
+    const options = {
+      limit,
+      page,
+      sort,
+    };
 
-  // Obtener todos los productos
-  getProducts = async () => {
-    const productsJson = await fs.promises.readFile(this.path, 'utf-8');
-    return JSON.parse(productsJson);
+    const result = await Product.paginate(filters, options);
+
+    return {
+      status: 'success',
+      payload: result.docs,
+      totalPages: result.totalPages,
+      prevPage: result.prevPage,
+      nextPage: result.nextPage,
+      page: result.page,
+      hasPrevPage: result.hasPrevPage,
+      hasNextPage: result.hasNextPage,
+      prevLink: result.hasPrevPage ? `/api/products?page=${result.prevPage}&limit=${limit}` : null,
+      nextLink: result.hasNextPage ? `/api/products?page=${result.nextPage}&limit=${limit}` : null,
+    };
   }
 
   // Obtener un producto por su ID
   getProductById = async (id) => {
-    const products = await this.getProducts();
-    return products.find(product => product.id === parseInt(id));
+    return await Product.findById(id);
   }
 
   // Agregar un nuevo producto
   addProduct = async (productData) => {
-    const products = await this.getProducts();
-    const newId = products.length ? products[products.length - 1].id + 1 : 1;
-    const newProduct = { id: newId, ...productData };
-    products.push(newProduct);
-    await fs.promises.writeFile(this.path, JSON.stringify(products, null, 2), 'utf-8');
+    const newProduct = new Product(productData);
+    await newProduct.save();
     return newProduct;
   }
 
-  // Actualizar un producto por su ID
+  // Actualizar un producto por ID
   updateProductById = async (id, updatedData) => {
-    const products = await this.getProducts();
-    const productIndex = products.findIndex(product => product.id === parseInt(id));
-    if (productIndex === -1) return null;
-    products[productIndex] = { ...products[productIndex], ...updatedData };
-    await fs.promises.writeFile(this.path, JSON.stringify(products, null, 2), 'utf-8');
-    return products[productIndex];
+    return await Product.findByIdAndUpdate(id, updatedData, { new: true });
   }
 
-  // Eliminar un producto por su ID
+  // Eliminar un producto por ID
   deleteProductById = async (id) => {
-    const products = await this.getProducts();
-    const updatedProducts = products.filter(product => product.id !== parseInt(id));
-    await fs.promises.writeFile(this.path, JSON.stringify(updatedProducts, null, 2), 'utf-8');
+    await Product.findByIdAndDelete(id);
     return true;
   }
 }

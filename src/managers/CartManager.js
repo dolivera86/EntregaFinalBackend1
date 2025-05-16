@@ -1,68 +1,57 @@
-import fs from 'fs';
-import path from 'path';
-
-const cartsFile = path.join('src', 'data', 'carts.json');
+import Cart from '../models/Cart.js';
+import Product from '../models/Product.js';
 
 class CartManager {
-  constructor() {
-    this.path = cartsFile;
-  }
-
-  // Generar un nuevo ID para los carritos
-  generateNewId = (carts) => {
-    if (carts.length > 0) {
-      return carts[carts.length - 1].id + 1;
-    } else {
-      return 1;
-    }
-  }
-
   // Crear un nuevo carrito vacío
   addCart = async () => {
-    const cartsJson = await fs.promises.readFile(this.path, 'utf-8');
-    const carts = JSON.parse(cartsJson);
-    const id = this.generateNewId(carts);
-    const newCart = { id, products: [] };
-    carts.push(newCart);
-    await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2), 'utf-8');
+    const newCart = new Cart();
+    await newCart.save();
     return newCart;
   }
 
   // Obtener los productos de un carrito por su ID
   getProductsInCartById = async (cid) => {
-    const cartsJson = await fs.promises.readFile(this.path, 'utf-8');
-    const carts = JSON.parse(cartsJson);
-    const cart = carts.find(cart => cart.id === parseInt(cid));
+    const cart = await Cart.findById(cid).populate('products.product');
     if (!cart) return null;
     return cart.products;
   }
 
   // Agregar un producto a un carrito
   addProductInCart = async (cid, pid, quantity) => {
-    const cartsJson = await fs.promises.readFile(this.path, 'utf-8');
-    const carts = JSON.parse(cartsJson);
+    const product = await Product.findById(pid);
+    if (!product) return null;
 
-    // Buscamos el carrito por su id
-    const cart = carts.find(cart => cart.id === parseInt(cid));
-
-    // Si no encuentra el carrito devuelve null
+    const cart = await Cart.findById(cid);
     if (!cart) return null;
 
-    // Buscar si el producto ya está en el carrito
-    const existingProductIndex = cart.products.findIndex(product => product.id === parseInt(pid));
+    const existingProductIndex = cart.products.findIndex(item => item.product.toString() === pid);
     if (existingProductIndex !== -1) {
-
-      // Si existe, sumar la cantidad
       cart.products[existingProductIndex].quantity += quantity;
     } else {
-
-      // Si no existe, agregarlo como un nuevo producto
-      cart.products.push({ id: parseInt(pid), quantity });
+      cart.products.push({ product: pid, quantity });
     }
 
-    await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2), 'utf-8');
+    await cart.save();
+    return cart;
+  }
 
-    // Carrito actualizado
+  // Eliminar un producto de un carrito
+  deleteProductInCart = async (cid, pid) => {
+    const cart = await Cart.findById(cid);
+    if (!cart) return null;
+
+    cart.products = cart.products.filter(item => item.product.toString() !== pid);
+    await cart.save();
+    return cart;
+  }
+
+  // Eliminar todos los productos de un carrito
+  clearCart = async (cid) => {
+    const cart = await Cart.findById(cid);
+    if (!cart) return null;
+
+    cart.products = [];
+    await cart.save();
     return cart;
   }
 }
