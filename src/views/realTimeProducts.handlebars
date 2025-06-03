@@ -9,7 +9,7 @@
   <h1>Productos en Tiempo Real</h1>
   <ul id="productList">
     {{#each products}}
-      <li>{{this.title}} - ${{this.price}} <button onclick="deleteProduct({{this.id}})">Eliminar</button></li>
+      <li>{{this.title}} - ${{this.price}} <button onclick="deleteProduct('{{this._id}}')">Eliminar</button></li>
     {{/each}}
   </ul>
   <form id="productForm">

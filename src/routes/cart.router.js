@@ -2,6 +2,7 @@ import express from 'express';
 import CartManager from '../managers/CartManager.js';
 
 const router = express.Router();
+const cartManager = new CartManager();
 
 // Eliminar producto de un carrito
 router.delete('/:cid/products/:pid', async (req, res) => {

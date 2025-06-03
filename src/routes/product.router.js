@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
   let sortOptions = {};
   if (sort) sortOptions = { price: sort === 'asc' ? 1 : -1 };
 
-  const result = await productManager.getProducts(
+  const result = await ProductManager.getProducts(
     parseInt(limit),
     parseInt(page),
     filters,

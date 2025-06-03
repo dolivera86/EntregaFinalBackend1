@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lista de Productos</title>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
+
 <body>
   <h1>Lista de Productos</h1>
-<ul>
-  {{#each products}}
+  <ul>
+    {{#each products}}
     <li>{{this.title}} - ${{this.price}}</li>
-  {{/each}}
-</ul>
+    {{/each}}
+  </ul>
+  <div>
+    {{#if prevLink}}
+    <a href="{{prevLink}}">Página Anterior</a>
+    {{/if}}
 
-{{#if prevLink}}
-  <a href="{{prevLink}}">Página Anterior</a>
-{{/if}}
-
-{{#if nextLink}}
-  <a href="{{nextLink}}">Página Siguiente</a>
-{{/if}}
-
+    {{#if nextLink}}
+    <a href="{{nextLink}}">Página Siguiente</a>
+    {{/if}}
+  </div>
 </body>
+
 </html>
